@@ -45,30 +45,42 @@ main {
   margin: 150px 0;
 }
 
-/* custom Bootstrap */
 
-#formStep1 {
-  border: solid 0px #000;
-}
-
-#formStep1 input[type="text"] {
+#formStep1 input[type="text"],
+#formStep2 input[type="text"] {
   text-align: center !important;  
+  border-color: #0059b3 !important;
+  border-style: dotted;
 }
-#formStep1 input[type="text"]::placeholder {  
-  /* Firefox, Chrome, Opera */ 
+#formStep1 input[type="text"]::placeholder,
+#formStep2 input[type="text"]::placeholder {  
   text-align: center !important;  
   font-size: 14px;
-  text-transform: uppercase;
+  color:#0059b3 !important;  
 } 
 
 #btn-cta {
   padding: 25px !important;
   background: #0059b3 !important;
   border: none;
-  /* width: 300px; */
   width: 100%;
 }
 
 #btn-cta:hover {
   opacity: .9;
 }
+
+#formStep2 .bootstrap-select .filter-option-inner {
+  opacity: .5;
+}
+
+#formStep2 .bootstrap-select * {
+  color:#0059b3 !important;
+  text-align: center;
+}
+#formStep2 .bootstrap-select .dropdown-item {
+  /* font-weight: 600;; */
+  text-align: left;
+  font-size: 14px;
+}
+
