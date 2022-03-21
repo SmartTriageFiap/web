@@ -62,9 +62,11 @@ main {
 } 
 
 #btn-cta {
-  padding: 25px 120px !important;
+  padding: 25px !important;
   background: #0059b3 !important;
   border: none;
+  /* width: 300px; */
+  width: 100%;
 }
 
 #btn-cta:hover {
