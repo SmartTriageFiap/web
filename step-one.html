@@ -17,7 +17,7 @@
     <main>
 
     
-      <form id="formStep1" action="./step-two.html">
+      <form id="formStep1" action="./step-two.html" method="post">
 
         <div class="row">
           <div class="col-sm-4"></div>
@@ -74,11 +74,59 @@
     </main>
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
-    <script>
+    <script type="module">
 
 
+
+      $("#formStep1").on("submit", function(){
+
+
+        var $form = $(this);
+        $.ajax({
+            type: 'GET',
+            crossDomain: true,
+            // data: "cpf="+ $("#inputEmail1").val(),
+            // dataType: 'json',
+            url: "http://ec2-52-4-254-101.compute-1.amazonaws.com:8080/v1/hmv/questions/"+$("#inputEmail1").val(),
+              // "headers": {
+              //   "accept": "application/json",
+              //   "Access-Control-Allow-Origin":"*",
+                // "Access-Control-Allow-Headers": "*",
+                //only need part of this for my custom header
+                // "Access-Control-Allow-Headers": "x-requested-with, x-requested-by"
+            // },
+            success: function (data, textStatus, xhr) {
+
+              // Cliente já havia preenchido a app anteriormente, os próximos passados trazem as questōes já preenchidas
+              if (xhr.status == 200) {
+                Cookies.set('cpf', $("#inputEmail1").val(), { expires: 7, path: './' });
+                Cookies.set('answers', JSON.stringify(data), { expires: 7, path: './' });
+                console.log("Consulta de cpf ok "+$("#inputEmail1").val());
+                
+                window.location.href = $form.attr("action");
+              }
+            },
+            error: function (error) {
+
+              // Cliente náo tinha acessado a app anteriormente, os próximos passos seguem normalmente como primeiro acesso!
+              if (error.status == 404) {
+                
+                Cookies.set('cpf', $("#inputEmail1").val(), { expires: 7, path: './' });
+                Cookies.set('answers', "", { expires: 7, path: './' });
+                console.log("Cliente com primeiro acesso a app!");
+                
+                window.location.href = $form.attr("action");
+              } else {
+                console.log("Erro "+error.status);
+              }
+            }
+        })
+
+        return false;
+      });
 
     </script>
   </body>
