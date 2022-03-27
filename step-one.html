@@ -88,9 +88,10 @@
           // debug: true, //retira essa linha, para o form voltar a funcionar
           rules: {
               'inputCpf': {
-                  cpf: 'valid' //valida tanto Formatação como os Digitos
-                          //caso não queira validar a formatação use => cpf: 'valid'
-                          //caso só queira validar a formatação use => cpf: 'format'
+                  cpf: 'valid' 
+                  //valida tanto Formatação como os Digitos
+                  //caso não queira validar a formatação use => cpf: 'valid'
+                  //caso só queira validar a formatação use => cpf: 'format'
               }
           }
       });
@@ -106,8 +107,6 @@
         $.ajax({
             type: 'GET',
             crossDomain: true,
-            // data: "cpf="+ $("#inputCpf").val(),
-            // dataType: 'json',
             url: BASE_URI,
               // "headers": {
               //   "accept": "application/json",

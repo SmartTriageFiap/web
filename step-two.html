@@ -48,25 +48,25 @@
               
               <div class="form-group">
                 <select class="selectpicker form-control" multiple data-selected-text-format="count > 4">
-                  <option>Diarréia</option>
-                  <option>Dor abdominal</option>
-                  <option>Dores articulares</option>
-                  <option>Dor no corpo</option>
-                  <option>Dor de garganta</option>
-                  <option>Dor lombar</option>
-                  <option>Dor de cabeça</option>
-                  <option>Dor no peito</option>
-                  <option>Dor para urinar</option>
-                  <option>Falta de ar</option>
-                  <option>Febre</option>
-                  <option>Lesōes na pele</option>
-                  <option>Mal estar/tonturas/desmaio</option>
-                  <option>Náuseas</option>
-                  <option>Palpitação</option>
-                  <option>Tonteira</option>
-                  <option>Torçōes</option>
-                  <option>Tosse</option>
-                  <option>Vômitos</option>
+                  <option value="1">Diarréia</option>
+                  <option value="2">Dor abdominal</option>
+                  <option value="3">Dores articulares</option>
+                  <option value="4">Dor no corpo</option>
+                  <option value="5">Dor de garganta</option>
+                  <option value="6">Dor lombar</option>
+                  <option value="7">Dor de cabeça</option>
+                  <option value="8">Dor no peito</option>
+                  <option value="9">Dor para urinar</option>
+                  <option value="10">Falta de ar</option>
+                  <option value="11">Febre</option>
+                  <option value="12">Lesōes na pele</option>
+                  <option value="13">Mal estar/tonturas/desmaio</option>
+                  <option value="14">Náuseas</option>
+                  <option value="15">Palpitação</option>
+                  <option value="16">Tonteira</option>
+                  <option value="17">Torçōes</option>
+                  <option value="18">Tosse</option>
+                  <option value="19">Vômitos</option>
                 </select>
               </div>
             </div>
@@ -117,41 +117,87 @@
 
     <script>
 
-      // To style all selects
+      // Iniciar plugin do selectpicker
       $('.selectpicker').selectpicker();
 
 
 
+      // Se já existir preenchimento anterior do paciente, atualizar valores do select
+      var answers = Cookies.get('answers');
 
+      if (answers != "") {
+        var arr = [];
+        JSON.parse(answers).forEach(function(elem,idx){
+
+          arr.push(elem.id);
+        });
+        $('.selectpicker').selectpicker("val", arr);
+      }
+
+
+
+      /* 
+      Resgatar dados selecionados pelo usuario e converter para o formato da API (enviado no body da requisicao) 
+      Valor esperado: arrayObject 
+      [{   
+        "answer": 1,
+        "id": "1"             
+        },
+        {        
+        "answer": 1,        
+        "id": "2"        
+        }]
+      */
+      function convertForAPI() {
+        var arrSelect = $('.selectpicker').selectpicker("val");
+        var answers = [];
+
+        arrSelect.forEach(function(elem,idx){
+
+          var obj = {
+            "id": elem,
+            "answer": 1
+          };
+          answers.push(obj);
+          
+        });
+
+        return JSON.stringify(answers);
+      }
+
+
+
+
+      
       $("#formStep2").on("submit", function(){
 
-        var BASE_URI = "http://ec2-52-4-254-101.compute-1.amazonaws.com:8080/v1/hmv/questions/"+$("#inputEmail1").val();
+        var BASE_URI = "http://ec2-52-4-254-101.compute-1.amazonaws.com:8080/v1/hmv/questions/"+Cookies.get('cpf');
         var $form = $(this);
+        var jsonAnswers = convertForAPI();
+        
 
         $.ajax({
             type: 'POST',
             crossDomain: true,
-            data: "cpf="+ $("#inputEmail1").val(),
-            // dataType: 'json',
+            data: jsonAnswers,
             url: BASE_URI,
             success: function (data, textStatus, xhr) {
               
-              // Cliente já havia preenchido a app anteriormente, os próximos passados trazem as questōes já preenchidas
               if (xhr.status == 200) {
-                Cookies.get('cpf');
-                Cookies.get('answers');
+                Cookies.set('answers', jsonAnswers, { expires: 7, path: './' });
+                Cookies.set('qrcode', data.qrcode, { expires: 1, path: './' });
+                Cookies.set('short_id', data.short_id, { expires: 1, path: './' });
 
                 window.location.href = $form.attr("action");
               }
             },
             error: function (error) {
-  
               console.log("Erro "+error.status);
             }
         })
 
         return false;
-        });
+      });
 
     </script>
   </body>
