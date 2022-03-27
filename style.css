@@ -1,4 +1,7 @@
 
+body {
+  overflow-x: hidden;
+}
 
 main {
   border:solid 0px #000;
