@@ -20,8 +20,8 @@
       <form id="formStep1" action="./step-two.html" method="post">
 
         <div class="row">
-          <div class="col-sm-4"></div>
-          <div class="col-sm-4 text-center">
+          <div class="col-xs-0 col-md-4"></div>
+          <div class="col-xs-12 col-md-4 text-center">
             <h2 class="primary-text primary-title animate__animated animate__fadeInUp">Smart Triage</h2>
             <!-- <p class="primary-text primary-p animate__animated animate__fadeIn animate__delay-1s">Faça sua triagem antes de chegar a Moinhos do Vento mais próxima!</p>   -->
           </div>        
@@ -30,8 +30,8 @@
         <div class="divider-md"></div>
 
         <div class="row">
-          <div class="col-sm-4"></div>
-          <div class="col-sm-4 text-center">
+          <div class="col-xs-2 col-lg-4"></div>
+          <div class="col-xs-8 col-lg-4 text-center">
             <div class="progress animate__animated animate__fadeInUp">
               <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 33%" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
@@ -41,8 +41,8 @@
         <div class="divider-xl"></div>
 
         <div class="row">
-          <div class="col-sm-4"></div>
-          <div class="col-sm-4 text-center">
+          <div class="col-xs-2 col-lg-4"></div>
+          <div class="col-xs-8 col-lg-4 text-center">
             <div class="mb-3 animate__animated animate__zoomIn">
               <!-- <label for="inputCpf" class="form-label">Digite seu CPF</label> -->
               <input type="text" class="form-control form-control-lg" id="inputCpf" name="inputCpf" aria-describedby="cpfHelp" placeholder="Digite seu CPF" autofocus required>
@@ -63,8 +63,8 @@
         <div class="divider-sm"></div>
 
         <div class="row">
-          <div class="col-sm-3"></div>
-          <div class="col-sm-6 text-center">
+          <div class="col-xs-3"></div>
+          <div class="col-xs-6 text-center">
             <p class="primary-text primary-p">Desenvolvido por Grupo 14 - Challenge FIAP<br/>© 2022</p>
           </div>
         </div>
@@ -108,12 +108,11 @@
             type: 'GET',
             crossDomain: true,
             url: BASE_URI,
-              // "headers": {
-              //   "accept": "application/json",
-              //   "Access-Control-Allow-Origin":"*",
-                // "Access-Control-Allow-Headers": "*",
-                //only need part of this for my custom header
-                // "Access-Control-Allow-Headers": "x-requested-with, x-requested-by"
+            // "headers": {
+            //   "accept": "application/json",
+            //   "Access-Control-Allow-Origin":"*",
+            //   "Access-Control-Allow-Headers": "*",
+            //   "Access-Control-Allow-Headers": "x-requested-with, x-requested-by"
             // },
             success: function (data, textStatus, xhr) {
               
