@@ -6,6 +6,12 @@ main {
   background: url('./images/logo-hospital-moinhos-do-vento.png') no-repeat center center;
 }
 
+label.error {
+  margin: 15px 0;
+  color:darkred;
+  font-weight: bold;
+}
+
 .progress-bar {
   opacity: .4;
 }

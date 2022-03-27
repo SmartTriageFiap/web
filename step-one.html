@@ -44,8 +44,8 @@
           <div class="col-sm-4"></div>
           <div class="col-sm-4 text-center">
             <div class="mb-3 animate__animated animate__zoomIn">
-              <!-- <label for="inputEmail1" class="form-label">Digite seu CPF</label> -->
-              <input type="text" class="form-control form-control-lg" id="inputEmail1" aria-describedby="emailHelp" placeholder="Digite seu CPF" autofocus>
+              <!-- <label for="inputCpf" class="form-label">Digite seu CPF</label> -->
+              <input type="text" class="form-control form-control-lg" id="inputCpf" name="inputCpf" aria-describedby="cpfHelp" placeholder="Digite seu CPF" autofocus required>
               <!-- <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> -->
             </div>
           </div>
@@ -75,22 +75,40 @@
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-mask-plugin@1.14.16/dist/jquery.mask.min.js"></script>
+    <script src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
-    <script type="module">
+    <script>
 
 
+      $('#inputCpf').mask('000.000.000-00', {reverse: true});
+
+      $('#formStep1').validate({
+          // debug: true, //retira essa linha, para o form voltar a funcionar
+          rules: {
+              'inputCpf': {
+                  cpf: 'valid' //valida tanto Formatação como os Digitos
+                          //caso não queira validar a formatação use => cpf: 'valid'
+                          //caso só queira validar a formatação use => cpf: 'format'
+              }
+          }
+      });
 
       $("#formStep1").on("submit", function(){
 
-
         var $form = $(this);
+        var cpfDigitado = $("#inputCpf").val().replace(/[^0-9]/gi, ''); //  cpf com apenas numeros 
+        var BASE_URI = "http://ec2-52-4-254-101.compute-1.amazonaws.com:8080/v1/hmv/questions/"+cpfDigitado;
+        
+        
+
         $.ajax({
             type: 'GET',
             crossDomain: true,
-            // data: "cpf="+ $("#inputEmail1").val(),
+            // data: "cpf="+ $("#inputCpf").val(),
             // dataType: 'json',
-            url: "http://ec2-52-4-254-101.compute-1.amazonaws.com:8080/v1/hmv/questions/"+$("#inputEmail1").val(),
+            url: BASE_URI,
               // "headers": {
               //   "accept": "application/json",
               //   "Access-Control-Allow-Origin":"*",
@@ -99,13 +117,13 @@
                 // "Access-Control-Allow-Headers": "x-requested-with, x-requested-by"
             // },
             success: function (data, textStatus, xhr) {
-
+              
               // Cliente já havia preenchido a app anteriormente, os próximos passados trazem as questōes já preenchidas
               if (xhr.status == 200) {
-                Cookies.set('cpf', $("#inputEmail1").val(), { expires: 7, path: './' });
-                Cookies.set('answers', JSON.stringify(data), { expires: 7, path: './' });
-                console.log("Consulta de cpf ok "+$("#inputEmail1").val());
-                
+                Cookies.set('cpf', cpfDigitado, { expires: 7, path: './' });
+                Cookies.set('answers', JSON.stringify(data.answers), { expires: 7, path: './' });
+                console.log("Consulta de cpf ok "+$("#inputCpf").val());
+
                 window.location.href = $form.attr("action");
               }
             },
@@ -113,8 +131,7 @@
 
               // Cliente náo tinha acessado a app anteriormente, os próximos passos seguem normalmente como primeiro acesso!
               if (error.status == 404) {
-                
-                Cookies.set('cpf', $("#inputEmail1").val(), { expires: 7, path: './' });
+                Cookies.set('cpf', cpfDigitado, { expires: 7, path: './' });
                 Cookies.set('answers', "", { expires: 7, path: './' });
                 console.log("Cliente com primeiro acesso a app!");
                 
@@ -127,6 +144,55 @@
 
         return false;
       });
+
+
+
+
+
+      /////////
+      function isCpf(cpf) {
+        exp = /\.|-/g;
+        cpf = cpf.toString().replace(exp, "");
+        var digitoDigitado = eval(cpf.charAt(9) + cpf.charAt(10));
+        var soma1 = 0,
+                soma2 = 0;
+        var vlr = 11;
+        for (i = 0; i < 9; i++) {
+            soma1 += eval(cpf.charAt(i) * (vlr - 1));
+            soma2 += eval(cpf.charAt(i) * vlr);
+            vlr--;
+        }
+        soma1 = (((soma1 * 10) % 11) === 10 ? 0 : ((soma1 * 10) % 11));
+        soma2 = (((soma2 + (2 * soma1)) * 10) % 11);
+        if (cpf === "11111111111" || cpf === "22222222222" || cpf === "33333333333" || cpf === "44444444444" || cpf === "55555555555" || cpf === "66666666666" || cpf === "77777777777" || cpf === "88888888888" || cpf === "99999999999" || cpf === "00000000000") {
+            var digitoGerado = null;
+        } else {
+            var digitoGerado = (soma1 * 10) + soma2;
+        }
+        if (digitoGerado !== digitoDigitado) {
+            return false;
+        }
+        return true;
+    }
+
+    function isCpfFormatted(cpf) {
+        var validCPF = /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/;
+        return cpf.match(validCPF);
+    }
+    (function ($) {
+        $.validator.addMethod("cpf", function (value, element, type) {
+            if (value === "")
+                return true;
+            if ((type === 'format' || type === 'both') && !isCpfFormatted(value))
+                return false;
+            else
+                return ((type === 'valid' || type === 'both')) ? isCpf(value) : true;
+        }, function (type, element) {
+            return (type === 'format' || (type === 'both' && !isCpfFormatted($(element).val()))) ? 'Formato do CPF n&atilde;o &eacute; v&aacute;lido' : 'Por favor digite um CPF válido';
+        });
+      })(jQuery);
+
+
 
     </script>
   </body>
